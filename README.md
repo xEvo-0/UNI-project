@@ -364,15 +364,6 @@ Server->>Database: Approved / Rejected
 
 ---
 
-# 👨‍💻 Author
-
-**Rahul Kushwaha**
-
-GitHub: https://github.com/Rahul-Elite/University-Assignment-Management-Portal
-
-LinkedIn: https://www.linkedin.com/in/rahul-kushwaha-15381b368/
-
----
 
 # ⭐ Support
 
