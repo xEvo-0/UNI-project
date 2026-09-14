@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Assignment | Faculty Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/20 min-h-screen text-slate-800">
+
+    <div class="flex">
+
+        <!-- Sidebar -->
+        <% if (typeof user !== 'undefined' && user.role === "HOD") { %>
+            <%- include("partials/hodNavbar", { activePage: "reviews" }) %>
+        <% } else { %>
+            <%- include("partials/navBar", { activePage: "dashboard" }) %>
+        <% } %>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-8 lg:p-10 overflow-y-auto animate-fade-in-up">
+
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white/70 backdrop-blur-md p-6 rounded-2xl border border-slate-200/50 shadow-sm transition-all duration-300 hover:shadow-md gap-4">
+                <div>
+                    <span class="text-xxs font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100/80 inline-block mb-2">Evaluation Workspace</span>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Review Assignment</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-slate-500 font-bold">Current Status:</span>
+                    <% if(assignment.status === 'Submitted' || assignment.status === 'Forwarded'){ %>
+                        <span class="bg-orange-400 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+                            <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+                            <%= assignment.status %>
+                        </span>
+                    <% } else if(assignment.status === 'Approved'){ %>
+                        <span class="bg-green-500 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+                            <%= assignment.status %>
+                        </span>
+                    <% } else { %>
+                        <span class="bg-red-500 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+                            <%= assignment.status %>
+                        </span>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Glassmorphic Details Card -->
+            <div class="bg-white/80 backdrop-blur-xl border border-slate-200/50 shadow-2xl rounded-3xl p-6 lg:p-8">
+
+                <!-- TOP DETAILS GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-200/40 shadow-sm transition hover:shadow-md hover:bg-slate-50">
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Student Name</p>
+                        <h3 class="text-sm font-bold text-slate-800"><%= student.name %></h3>
+                    </div>
+
+                    <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-200/40 shadow-sm transition hover:shadow-md hover:bg-slate-50">
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Course & Department</p>
+                        <h3 class="text-sm font-bold text-slate-800"><%= student.departement %></h3>
+                    </div>
+
+                    <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-200/40 shadow-sm transition hover:shadow-md hover:bg-slate-50">
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Assignment Title</p>
+                        <h3 class="text-sm font-bold text-slate-800 truncate"><%= assignment.title %></h3>
+                    </div>
+
+                    <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-200/40 shadow-sm transition hover:shadow-md hover:bg-slate-50">
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Submitted On</p>
+                        <h3 class="text-sm font-bold text-slate-800">
+                            <%= assignment.submittedAt ? new Date(assignment.submittedAt).toLocaleDateString() : "-" %>
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- TWO COLUMN WORKSPACE -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+
+                    <!-- LEFT COLUMN - Description & Files (6 Columns) -->
+                    <div class="lg:col-span-6 space-y-6">
+                        <div>
+                            <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                                </svg>
+                                Assignment Description
+                            </h3>
+                            <div class="p-5 bg-slate-50/60 border border-slate-200/50 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-inner">
+                                <%= assignment.description %>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                </svg>
+                                Attachments / Files
+                            </h3>
+
+                            <% if (Array.isArray(assignment.filename) && assignment.filename.length > 0) { %>
+                                <div class="space-y-3">
+                                    <% assignment.filename.forEach((file, index) => { %>
+                                    <div class="flex items-center justify-between bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm transition hover:shadow-md hover:border-slate-300">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-9 h-11 bg-red-50 text-red-655 rounded-xl relative flex items-center justify-center shadow-inner flex-shrink-0">
+                                                <span class="absolute bottom-1 left-0 right-0 bg-red-600 text-white text-[8px] font-black px-0.5 py-[1px] text-center rounded-sm tracking-wide uppercase">
+                                                    PDF
+                                                </span>
+                                            </div>
+                                            <p class="font-bold text-xs text-slate-700 truncate max-w-[180px] sm:max-w-[280px]"> <%= file %> </p>
+                                        </div>
+                                        <a href="<%= assignment.download_url[index] %>" target="_blank"
+                                           class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow shadow-emerald-500/10 active:scale-95 flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                            </svg>
+                                            Download
+                                        </a>
+                                    </div>
+                                    <% }) %>
+                                </div>
+                            <% } else { %>
+                                <p class="text-slate-400 italic text-xs bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 text-center">No Files Available</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN - Preview & Actions (6 Columns) -->
+                    <div class="lg:col-span-6 space-y-6">
+                        <div>
+                            <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Document Preview
+                            </h3>
+                            <div class="w-full h-[320px] border border-slate-200 bg-slate-50 rounded-2xl overflow-hidden shadow-inner transition hover:shadow hover:border-slate-350">
+                                <iframe src="<%- assignment.preview_url[0] %>" class="w-full h-full rounded-2xl" title="Assignment Preview"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- EVALUATION FORM -->
+                        <form action="<%= (typeof user !== 'undefined' && (user.role === 'HOD' || user.role === 'H.O.D')) ? '/hod/review/submit/' : '/professor/review/submit/' %><%-assignment._id%>" method="POST" enctype="multipart/form-data" class="space-y-4 bg-slate-50/40 p-5 rounded-2xl border border-slate-200/50 shadow-sm">
+                            
+                            <% if (typeof error !== 'undefined' && error) { %>
+                                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-xs font-bold text-red-800">
+                                                <%= error %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <div>
+                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-2">Remarks</label>
+                                <textarea name="remarks" class="w-full border border-slate-300 bg-white rounded-xl p-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition duration-200 placeholder:text-slate-400 font-medium" rows="3" placeholder="Enter feedback/remarks for the student..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-black text-slate-800 uppercase tracking-wider block mb-2">Upload Signature (PDF)</label>
+                                <div class="relative border-2 border-dashed border-slate-300 hover:border-indigo-500/80 bg-white rounded-xl p-4 transition-all group flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                    <input type="file" name="signature" multiple class="absolute inset-0 opacity-0 cursor-pointer" onchange="showFiles(this)">
+                                    <svg class="w-8 h-8 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-xs font-bold text-slate-700">Choose file or drag & drop</span>
+                                    <span class="text-[10px] text-slate-400 font-semibold">PDF formats up to 10MB</span>
+                                </div>
+                                <ul id="fileList" class="text-xs font-bold text-indigo-600 mt-2 space-y-1"></ul>
+                            </div>
+
+                            <div class="flex gap-4 pt-2">
+                                <button type="submit" name="action" value="approve"
+                                    class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/10 transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Approve
+                                </button>
+
+                                <button type="submit" name="action" value="reject"
+                                    class="flex-1 bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-red-500/10 transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Reject
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function showFiles(input) {
+            let list = document.getElementById("fileList");
+            list.innerHTML = "";
+            [...input.files].forEach(f => {
+                list.innerHTML += `<li class="flex items-center gap-1 bg-indigo-50 px-2.5 py-1.5 rounded-lg border border-indigo-100">📄 ${f.name}</li>`;
+            });
+        }
+    </script>
+
+</body>
+
+</html>

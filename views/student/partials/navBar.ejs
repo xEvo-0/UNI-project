@@ -1,0 +1,113 @@
+<!-- views/partials/sidebar.ejs -->
+
+<aside
+  class="fixed inset-y-0 left-0 w-72
+         bg-white/80 backdrop-blur-xl
+         shadow-2xl border-r border-gray-200/50
+         flex flex-col z-50">
+
+    <!-- HEADER -->
+    <div class="p-8 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600
+                        rounded-2xl shadow-lg flex items-center justify-center">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M12 14l9-5-9-5-9 5 9 5z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M12 14v6m0 0h-2m2 0h2"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">
+                    Student Portal
+                </h1>
+                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                    Academic Dashboard
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION (SCROLLABLE) -->
+    <nav class="flex-1 overflow-y-auto p-6 space-y-1">
+
+        <!-- Dashboard -->
+        <a href="/studentDashboard"
+           class="group flex items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200
+           <%= activePage === 'dashboard'
+                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200/50 scale-[1.02]'
+                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 hover:shadow-md border border-transparent hover:border-gray-200' %>">
+
+            <svg class="w-5 h-5 mr-3 transition-transform group-hover:scale-110
+                <%= activePage === 'dashboard'
+                    ? 'text-white'
+                    : 'text-gray-500 group-hover:text-emerald-600' %>"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7m-9 2v6"/>
+            </svg>
+            Dashboard
+        </a>
+
+        <!-- All Assignments -->
+        <a href="/allAssignments"
+           class="group flex items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200
+           <%= activePage === 'assignments'
+                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200/50 scale-[1.02]'
+                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 hover:shadow-md border border-transparent hover:border-gray-200' %>">
+
+            <svg class="w-5 h-5 mr-3 transition-transform group-hover:scale-110
+                <%= activePage === 'assignments'
+                    ? 'text-white'
+                    : 'text-gray-500 group-hover:text-emerald-600' %>"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7"/>
+            </svg>
+            All Assignments
+        </a>
+
+        <!-- Profile -->
+        <a href="/studentProfile"
+           class="group flex items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200
+           <%= activePage === 'profile'
+                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200/50 scale-[1.02]'
+                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 hover:shadow-md border border-transparent hover:border-gray-200' %>">
+
+            <svg class="w-5 h-5 mr-3 transition-transform group-hover:scale-110
+                <%= activePage === 'profile'
+                    ? 'text-white'
+                    : 'text-gray-500 group-hover:text-emerald-600' %>"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14"/>
+            </svg>
+            Profile
+        </a>
+
+        <!-- Divider -->
+        <div class="my-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+    </nav>
+
+    <!-- SIGN OUT (ALWAYS VISIBLE) -->
+    <div class="p-6 border-t border-gray-100 bg-white/80 backdrop-blur">
+        <a href="/logout"
+           class="group flex items-center w-full px-4 py-3 rounded-xl
+           bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-sm
+           shadow-lg hover:shadow-xl hover:from-red-600 hover:to-red-700
+           transition-all duration-200 transform hover:-translate-y-0.5">
+
+            <svg class="w-5 h-5 mr-3 transition-transform group-hover:scale-110"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+            </svg>
+            Sign Out
+        </a>
+    </div>
+
+</aside>
+
+<!-- PUSH MAIN CONTENT RIGHT -->
+<div class="ml-72"></div>

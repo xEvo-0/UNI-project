@@ -1,0 +1,263 @@
+<!-- views/student/partials/submitModal.ejs -->
+
+<!-- Modal Backdrop Overlay -->
+<div id="submitReviewModal" 
+     class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none"
+     aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  
+  <!-- Modal Card -->
+  <div id="submitReviewModalCard" 
+       class="relative bg-white w-full max-w-md mx-4 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-all duration-300 ease-out">
+    
+    <!-- Decorative Header Gradient Bar -->
+    <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+
+    <!-- Header Section -->
+    <div class="px-6 pt-6 pb-4 flex justify-between items-start">
+      <div class="flex items-center space-x-3">
+        <!-- SVG Icon -->
+        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="modal-title">Submit for Review</h3>
+          <p class="text-xs text-slate-500">Send assignment to your professor</p>
+        </div>
+      </div>
+      
+      <!-- Close Button -->
+      <button type="button" onclick="closeSubmitModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-1.5 rounded-lg transition-colors">
+        <span class="sr-only">Close</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Form Section -->
+    <form id="submitReviewForm" method="POST" class="space-y-5 px-6 pb-6">
+      
+      <!-- Assignment Info Card -->
+      <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Assignment Title</p>
+        <p id="modalAssignmentTitle" class="text-sm font-semibold text-slate-700 mt-1 truncate">Loading...</p>
+      </div>
+
+      <!-- Professor/Reviewer Selection -->
+      <div class="space-y-2">
+        <label for="modalProfessorSelect" class="block text-sm font-bold text-slate-700">Select Professor</label>
+        
+        <!-- Loading State -->
+        <div id="professorsLoading" class="flex items-center space-x-2.5 py-3 text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-200 rounded-xl px-3 justify-center">
+          <svg class="animate-spin h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="font-medium">Loading professors in your department...</span>
+        </div>
+
+        <!-- Error State -->
+        <div id="professorsError" class="hidden p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl">
+          <!-- Text gets updated dynamically -->
+        </div>
+
+        <!-- Dropdown Select -->
+        <select id="modalProfessorSelect" name="reviewer" required
+                class="hidden w-full border border-slate-200 px-3.5 py-2.5 rounded-xl bg-slate-50 text-slate-700 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 hover:border-slate-300 transition-all outline-none">
+          <option value="" disabled selected>-- Choose Professor --</option>
+        </select>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeSubmitModal()"
+                class="px-4.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+          Cancel
+        </button>
+        <button id="modalSubmitBtn" type="submit" disabled
+                class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl shadow-md hover:shadow-lg disabled:shadow-none transition-all">
+          Confirm Submission
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  let cachedProfessors = null;
+  let isFetchingProfessors = false;
+
+  function getModalElements() {
+    const els = {
+      modal: document.getElementById('submitReviewModal'),
+      card: document.getElementById('submitReviewModalCard'),
+      titleEl: document.getElementById('modalAssignmentTitle'),
+      form: document.getElementById('submitReviewForm'),
+      select: document.getElementById('modalProfessorSelect'),
+      loading: document.getElementById('professorsLoading'),
+      error: document.getElementById('professorsError'),
+      submitBtn: document.getElementById('modalSubmitBtn')
+    };
+    console.log("getModalElements returning:", els);
+    return els;
+  }
+
+  // Load and cache professors list
+  async function fetchProfessors() {
+    console.log("fetchProfessors called. cachedProfessors:", cachedProfessors, "isFetchingProfessors:", isFetchingProfessors);
+    if (cachedProfessors) return cachedProfessors;
+    if (isFetchingProfessors) return;
+
+    isFetchingProfessors = true;
+    const els = getModalElements();
+
+    try {
+      const response = await fetch('/api/professors');
+      const result = await response.json();
+      console.log("fetchProfessors response result:", result);
+      
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Failed to fetch professors');
+      }
+
+      cachedProfessors = result.professors || [];
+      return cachedProfessors;
+    } catch (err) {
+      console.error("fetchProfessors error:", err);
+      if (els.error) {
+        els.error.textContent = err.message || 'Could not load professors. Please try again.';
+        els.error.classList.remove('hidden');
+      }
+      if (els.loading) els.loading.classList.add('hidden');
+      return null;
+    } finally {
+      isFetchingProfessors = false;
+    }
+  }
+
+  // Populate select dropdown
+  function populateSelect(professors) {
+    console.log("populateSelect called with:", professors);
+    const els = getModalElements();
+    if (!els.select) return;
+    
+    // Clear previous options except default one
+    els.select.innerHTML = '<option value="" disabled selected>-- Choose Professor --</option>';
+
+    if (!professors || professors.length === 0) {
+      if (els.error) {
+        els.error.textContent = 'No professors found in your department.';
+        els.error.classList.remove('hidden');
+      }
+      if (els.loading) els.loading.classList.add('hidden');
+      els.select.classList.add('hidden');
+      if (els.submitBtn) els.submitBtn.disabled = true;
+      return;
+    }
+
+    professors.forEach(prof => {
+      const opt = document.createElement('option');
+      opt.value = prof.name;
+      opt.textContent = `${prof.name} - ${prof.departement || 'Department'}`;
+      els.select.appendChild(opt);
+    });
+
+    if (els.loading) els.loading.classList.add('hidden');
+    if (els.error) els.error.classList.add('hidden');
+    els.select.classList.remove('hidden');
+    
+    // Enable submit button once a choice is selected
+    els.select.addEventListener('change', () => {
+      if (els.submitBtn) els.submitBtn.disabled = !els.select.value;
+    });
+  }
+
+  // Open Modal
+  async function openSubmitModal(assignmentId, assignmentTitle) {
+    console.log("openSubmitModal triggered. assignmentId:", assignmentId, "assignmentTitle:", assignmentTitle);
+    try {
+      const els = getModalElements();
+      
+      // Set title and action
+      if (els.titleEl) els.titleEl.textContent = assignmentTitle;
+      if (els.form) els.form.action = `/submitReview/${assignmentId}`;
+
+      // Reset UI state
+      if (els.loading) els.loading.classList.remove('hidden');
+      if (els.error) els.error.classList.add('hidden');
+      if (els.select) els.select.classList.add('hidden');
+      if (els.submitBtn) els.submitBtn.disabled = true;
+
+      // Show modal container
+      if (els.modal) {
+        console.log("Showing modal backdrop element");
+        els.modal.classList.remove('pointer-events-none', 'opacity-0');
+        els.modal.classList.add('opacity-100');
+      } else {
+        console.error("Modal backdrop element not found in DOM!");
+      }
+      
+      // Card animation entry delay
+      if (els.card) {
+        setTimeout(() => {
+          els.card.classList.remove('scale-95');
+          els.card.classList.add('scale-100');
+        }, 10);
+      }
+
+      // Fetch and populate list
+      const professors = await fetchProfessors();
+      if (professors) {
+        populateSelect(professors);
+      }
+    } catch (err) {
+      console.error("Error in openSubmitModal:", err);
+    }
+  }
+
+  // Close Modal
+  function closeSubmitModal() {
+    console.log("closeSubmitModal triggered");
+    const els = getModalElements();
+    
+    // Animate Card out
+    if (els.card) {
+      els.card.classList.remove('scale-100');
+      els.card.classList.add('scale-95');
+    }
+
+    // Fade out backdrop
+    if (els.modal) {
+      els.modal.classList.remove('opacity-100');
+      els.modal.classList.add('opacity-0');
+
+      // Set pointer events off after transition
+      setTimeout(() => {
+        els.modal.classList.add('pointer-events-none');
+      }, 300);
+    }
+  }
+
+  // Hook up event listeners to close on backdrop click
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log("submitModal script DOMContentLoaded initialized");
+    const els = getModalElements();
+    if (els.modal) {
+      els.modal.addEventListener('click', (e) => {
+        if (e.target === els.modal) {
+          closeSubmitModal();
+        }
+      });
+    }
+    
+    // Hook up Escape key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && els.modal && !els.modal.classList.contains('pointer-events-none')) {
+        closeSubmitModal();
+      }
+    });
+  });
+</script>

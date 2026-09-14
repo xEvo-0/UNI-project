@@ -1,0 +1,51 @@
+<div id="left" class="w-[22vw] min-w-[240px] h-screen sticky top-0 bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700/50 p-6 flex flex-col box-border z-30 shadow-md">
+    <h2 id="title" class="text-2xl font-extrabold mb-8 tracking-wide">
+        <a href="/adminDashboard" class="text-white hover:text-indigo-300 flex items-center gap-2.5 transition-all duration-200">
+            <span class="text-xl">⚙️</span> Admin Panel
+        </a>
+    </h2>
+
+    <nav class="nav-menu flex flex-col gap-3.5">
+        <a href="/Departments" class="nav-item flex items-center justify-between p-3 rounded-lg text-[15px] font-semibold transition-all duration-200 shadow-sm border border-transparent">
+            <span class="flex items-center gap-3">🏢 Departments</span>
+        </a>
+
+        <a href="/users" class="nav-item flex items-center justify-between p-3 rounded-lg text-[15px] font-semibold transition-all duration-200 shadow-sm border border-transparent">
+            <span class="flex items-center gap-3">👥 Users</span>
+        </a>
+
+        <a href="/addUsers" class="nav-item flex items-center justify-between p-3 rounded-lg text-[15px] font-semibold transition-all duration-200 shadow-sm border border-transparent">
+            <span class="flex items-center gap-3">➕ Add User</span>
+        </a>
+
+        <a id="logout" href="/logout" class="nav-item flex items-center justify-between p-3 rounded-lg text-[15px] font-semibold transition-all duration-200 shadow-sm mt-8 border border-transparent">
+            <span class="flex items-center gap-3">🚪 Logout</span>
+        </a>
+    </nav>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach(item => {
+            const href = item.getAttribute("href");
+            const isLogout = item.id === "logout";
+
+            if (isLogout) {
+                // Logout button styling - standard red/pink look
+                item.classList.add("bg-rose-500/10", "text-rose-400", "border-rose-500/25", "hover:bg-rose-600", "hover:text-white", "hover:border-rose-600");
+            } else {
+                // Regular navigation item styling
+                if (currentPath === href || (href !== "/adminDashboard" && currentPath.startsWith(href))) {
+                    // Active state: premium indigo highlight
+                    item.classList.add("bg-indigo-600", "text-white", "border-indigo-500", "font-bold", "scale-[1.02]", "shadow-lg", "shadow-indigo-950/30");
+                } else {
+                    // Inactive state: clean slate text, fully readable on dark background
+                    item.classList.add("bg-slate-700/30", "text-slate-300", "border-slate-700/20", "hover:bg-slate-700/80", "hover:text-white", "hover:translate-x-1.5");
+                }
+            }
+        });
+    });
+</script>

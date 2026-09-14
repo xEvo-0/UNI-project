@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Assignments | Professor Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/20 min-h-screen text-slate-800">
+
+    <div class="flex">
+
+        <!-- Sidebar -->
+        <%- include("partials/navBar", { activePage: "reviews" }) %>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-8 lg:p-10 overflow-y-auto animate-fade-in-up">
+
+            <!-- Page Header -->
+            <div class="flex justify-between items-center mb-8 bg-white/70 backdrop-blur-md p-6 rounded-2xl border border-slate-200/50 shadow-sm transition-all duration-300 hover:shadow-md">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Evaluations & Reviews</h1>
+                    <p class="text-xs text-slate-600 font-semibold mt-1">Evaluate and review assignments submitted to your department queue</p>
+                </div>
+            </div>
+
+            <!-- Interactive Status Overview Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- All Cards -->
+                <div onclick="selectStatusFilter('')" 
+                     class="group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-1 <%= typeof status === 'undefined' || status === '' ? 'border-slate-800 shadow-sm bg-slate-100/90' : 'bg-slate-50/50 hover:bg-slate-100/60 border-slate-150/80 hover:border-slate-350' %>">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xxs font-extrabold text-slate-700 uppercase tracking-wider">All</span>
+                        <div class="w-7 h-7 bg-slate-150 text-slate-800 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-800">Evaluation Queue</span>
+                </div>
+
+                <!-- Submitted -->
+                <div onclick="selectStatusFilter('Submitted')" 
+                     class="group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-1 <%= typeof status !== 'undefined' && status === 'Submitted' ? 'border-orange-400 shadow-sm bg-orange-100/50' : 'bg-orange-50/30 hover:bg-orange-50/60 border-slate-150/80 hover:border-orange-355' %>">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xxs font-extrabold text-orange-850 uppercase tracking-wider">Submitted</span>
+                        <div class="w-7 h-7 bg-orange-50 text-orange-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-850">Pending Review</span>
+                </div>
+
+                <!-- Approved -->
+                <div onclick="selectStatusFilter('Approved')" 
+                     class="group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-1 <%= typeof status !== 'undefined' && status === 'Approved' ? 'border-green-500 shadow-sm bg-green-100/50' : 'bg-green-50/30 hover:bg-green-50/60 border-slate-150/80 hover:border-green-350' %>">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xxs font-extrabold text-green-800 uppercase tracking-wider">Approved</span>
+                        <div class="w-7 h-7 bg-green-50 text-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-850">Evaluated & Approved</span>
+                </div>
+
+                <!-- Rejected -->
+                <div onclick="selectStatusFilter('Rejected')" 
+                     class="group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-1 <%= typeof status !== 'undefined' && status === 'Rejected' ? 'border-red-500 shadow-sm bg-red-100/50' : 'bg-red-50/30 hover:bg-red-50/60 border-slate-150/80 hover:border-red-355' %>">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xxs font-extrabold text-red-800 uppercase tracking-wider">Rejected</span>
+                        <div class="w-7 h-7 bg-red-50 text-red-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-850">Evaluated & Rejected</span>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <form action="/professor/myReview" method="GET" class="flex flex-wrap gap-4 items-center mb-8 bg-white/50 backdrop-blur-md p-4 rounded-2xl border border-slate-200/40 shadow-sm">
+
+                <!-- Status Filter -->
+                <div class="flex flex-col gap-1 min-w-[150px]">
+                    <span class="text-[10px] font-black text-slate-800 uppercase tracking-wider ml-1">Status</span>
+                    <select name="status" class="p-2.5 border border-slate-300 bg-white rounded-xl text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition cursor-pointer text-slate-900 font-bold">
+                        <option value="">All Statuses</option>
+                        <option value="Submitted" <%= typeof status !== 'undefined' && status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
+                        <option value="Approved" <%= typeof status !== 'undefined' && status === 'Approved' ? 'selected' : '' %>>Approved</option>
+                        <option value="Rejected" <%= typeof status !== 'undefined' && status === 'Rejected' ? 'selected' : '' %>>Rejected</option>
+                    </select>
+                </div>
+
+                <!-- Sort By Date -->
+                <div class="flex flex-col gap-1 min-w-[150px]">
+                    <span class="text-[10px] font-black text-slate-800 uppercase tracking-wider ml-1">Sort By Date</span>
+                    <select name="sort" class="p-2.5 border border-slate-300 bg-white rounded-xl text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition cursor-pointer text-slate-900 font-bold">
+                        <option value="new" <%= typeof sort !== 'undefined' && sort === 'new' ? 'selected' : '' %>>Newest First</option>
+                        <option value="old" <%= typeof sort !== 'undefined' && sort === 'old' ? 'selected' : '' %>>Oldest First</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end self-stretch pt-5">
+                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl shadow-md shadow-emerald-500/10 hover:shadow-lg hover:shadow-emerald-500/20 hover:from-emerald-700 hover:to-teal-700 text-sm font-semibold transition active:scale-95 cursor-pointer flex items-center gap-1.5 h-[42px]">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                        </svg>
+                        Filter
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto p-1">
+                <table class="min-w-full text-sm border-separate border-spacing-y-3">
+                    <thead class="text-slate-800 uppercase tracking-wider text-xxs font-black">
+                        <tr>
+                            <th class="py-2 px-6 text-left pb-1">Assignment Title</th>
+                            <th class="py-2 px-6 text-left pb-1">Category</th>
+                            <th class="py-2 px-6 text-left pb-1">Status</th>
+                            <th class="py-2 px-6 text-left pb-1">Submitted Date</th>
+                            <th class="py-2 px-6 text-left pb-1">Submitted By</th>
+                            <th class="py-2 px-6 text-right pb-1">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% if (assignments.length === 0) { %>
+                            <tr>
+                                <td colspan="6" class="text-center py-16 bg-white rounded-2xl border border-slate-100/80 text-slate-805 font-bold shadow-sm">
+                                    <div class="flex flex-col items-center justify-center space-y-2">
+                                        <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18" />
+                                        </svg>
+                                        <span>No assignments found in your queue.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% } %>
+
+                        <% assignments.forEach(assign => { %>
+                        <tr class="group hover:bg-slate-50/20 transition-all duration-350">
+
+                            <!-- Title (with Document Icon) -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 first:border-l first:rounded-l-2xl shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300 font-bold text-slate-805">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-9 h-9 bg-slate-50 group-hover:bg-white text-slate-650 group-hover:text-emerald-500 rounded-xl flex items-center justify-center shadow-inner group-hover:scale-105 transition-all duration-300 flex-shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                        </svg>
+                                    </div>
+                                    <span class="group-hover:text-emerald-600 transition-colors duration-355"><%= assign.title %></span>
+                                </div>
+                            </td>
+
+                            <!-- Category -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300 font-bold text-slate-800">
+                                <span class="px-2.5 py-1 bg-slate-100 group-hover:bg-white text-slate-855 text-xs rounded-lg border border-slate-200 capitalize font-extrabold">
+                                    <%= assign.category %>
+                                </span>
+                            </td>
+
+                            <!-- Status Badge (Preserving Exact Colors) -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300">
+                                <% if(assign.status === "Submitted"){ %>
+                                    <span class="bg-orange-400 text-white px-3.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider inline-block shadow-sm">Submitted</span>
+                                <% } else if(assign.status === "Approved"){ %>
+                                    <span class="bg-green-500 text-white px-3.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider inline-block shadow-sm">Approved</span>
+                                <% } else if(assign.status === "Forwarded"){ %>
+                                    <span class="bg-blue-500 text-white px-3.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider inline-block shadow-sm">Forwarded</span>
+                                <% } else { %>
+                                    <span class="bg-red-500 text-white px-3.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider inline-block shadow-sm">Rejected</span>
+                                <% } %>
+                            </td>
+
+                            <!-- Date -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300 font-bold text-slate-800">
+                                <div class="flex items-center space-x-1.5">
+                                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span><%= assign.submittedAt ? new Date(assign.submittedAt).toLocaleDateString() : "-" %></span>
+                                </div>
+                            </td>
+
+                            <!-- Submitted By -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300 font-bold text-slate-800">
+                                <div class="flex items-center space-x-1.5">
+                                    <div class="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-250 flex items-center justify-center text-[10px] font-bold text-indigo-850 uppercase tracking-tight">
+                                        <%= assign.submittedBy ? assign.submittedBy.substring(0, 2) : "-" %>
+                                    </div>
+                                    <span class="text-slate-855 text-xs font-bold"><%= assign.submittedBy || "-" %></span>
+                                </div>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="px-6 py-4.5 bg-white border-y border-slate-100/60 last:border-r last:rounded-r-2xl shadow-[0_1px_2px_rgba(0,0,0,0.02)] group-hover:bg-slate-50/50 group-hover:border-slate-200/80 transition-all duration-300 text-right">
+                                <% if(assign.status === "Submitted"){ %>
+                                    <a href="/professor/review/<%= assign._id %>"
+                                       class="inline-block bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-4.5 py-2 rounded-xl text-xs font-semibold shadow hover:shadow-lg transition-all duration-200">
+                                       Review
+                                    </a>
+                                <% } else if(assign.status === "Approved"){ %>
+                                    <span class="text-emerald-700 font-bold text-xs inline-flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shadow-sm shadow-emerald-500/5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        Approved
+                                    </span>
+                                <% } else if(assign.status === "Forwarded"){ %>
+                                    <span class="text-blue-700 font-bold text-xs inline-flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 shadow-sm shadow-blue-500/5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                        Forwarded
+                                    </span>
+                                <% } else { %>
+                                    <span class="text-rose-700 font-bold text-xs inline-flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 shadow-sm shadow-rose-500/5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Rejected
+                                    </span>
+                                <% } %>
+                            </td>
+
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <% if (pages > 1) { %>
+                <div class="flex justify-center mt-8 space-x-2">
+                    <% for(let i=1; i<=pages; i++){ %>
+                        <a href="?page=<%= i %>&status=<%= typeof status !== 'undefined' ? status : '' %>&sort=<%= typeof sort !== 'undefined' ? sort : 'new' %>"
+                           class="px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all border 
+                           <%= i==currentPage ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-600 hover:from-emerald-700 hover:to-teal-700 shadow-emerald-500/10' : 'bg-white text-slate-800 border-slate-350 hover:bg-slate-50 hover:text-slate-955 hover:border-slate-400' %>">
+                           <%= i %>
+                        </a>
+                    <% } %>
+                </div>
+            <% } %>
+
+        </main>
+    </div>
+
+    <script>
+        // Form submit
+        function selectStatusFilter(statusVal) {
+            const selectEl = document.querySelector('select[name="status"]');
+            if (selectEl) {
+                selectEl.value = statusVal;
+                selectEl.closest('form').submit();
+            }
+        }
+    </script>
+
+    <!-- Success Modal Overlay -->
+    <% if (typeof success !== 'undefined' && success === 'true') { %>
+    <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full border border-slate-100/85 shadow-2xl transform scale-100 opacity-100 transition-all duration-300 flex flex-col items-center text-center">
+            <!-- Success Icon (Checkmark) -->
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center border-4 border-emerald-100 shadow-md">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900 mt-6">Evaluation Submitted!</h3>
+            <p class="text-xs text-slate-550 mt-2 leading-relaxed">The assignment has been successfully evaluated, signed, and approved/forwarded. The student has been notified.</p>
+            <button onclick="closeSuccessModal()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-md hover:shadow-lg cursor-pointer">
+                Awesome
+            </button>
+        </div>
+    </div>
+    <script>
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                modal.querySelector('div').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.remove();
+                    // Clean up URL query parameters
+                    const url = new URL(window.location);
+                    url.searchParams.delete('success');
+                    window.history.replaceState({}, document.title, url);
+                }, 300);
+            }
+        }
+    </script>
+    <% } %>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Assignment Portal - Login</title>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/output.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="h-full flex flex-col items-center justify-center p-6 bg-[#13152a] text-slate-900 antialiased">
+
+  <div class="w-full max-w-[440px] p-8 sm:p-10 bg-white rounded-[2rem] shadow-2xl transition-all duration-300">
+    
+    <!-- Branding Header -->
+    <div class="flex flex-col items-center mb-8 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-[#4b49e5] text-white flex items-center justify-center shadow-lg shadow-indigo-150 mb-4">
+        <!-- SVG Book Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <h1 class="text-[22px] font-bold text-[#1e293b] leading-tight">University Assignment Management Portal</h1>
+      <p class="text-sm text-[#7a819b] mt-1.5 font-medium">Sign in to continue to your dashboard</p>
+    </div>
+
+    <form action="/login" method="POST" class="flex flex-col gap-5">
+      <!-- Email Address Input -->
+      <div class="form-group flex flex-col">
+        <label for="email" class="text-sm font-semibold text-[#334155] mb-2">Email Address</label>
+        <div class="relative flex items-center">
+          <div class="absolute left-4 pointer-events-none flex items-center justify-center">
+            <!-- Envelope SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            value="<%= email %>" 
+            placeholder="name@university.edu" 
+            class="w-full pl-12 pr-4 py-3.5 border border-slate-200 rounded-2xl bg-[#f8fafc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm text-slate-800 transition-all placeholder-slate-400" 
+            required
+          >
+        </div>
+        <% if (msg1 && msg1.trim() !== "") { %>
+          <p class="text-xs text-rose-500 mt-1.5 font-medium"><%= msg1 %></p>
+        <% } %>
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-group flex flex-col">
+        <label for="password" class="text-sm font-semibold text-[#334155] mb-2">Password</label>
+        <div class="relative flex items-center">
+          <div class="absolute left-4 pointer-events-none flex items-center justify-center">
+            <!-- Lock SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="••••••••" 
+            class="w-full pl-12 pr-4 py-3.5 border border-slate-200 rounded-2xl bg-[#f8fafc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm text-slate-800 transition-all placeholder-slate-400" 
+            required
+          >
+        </div>
+        <% if (msg2 && msg2.trim() !== "") { %>
+          <p class="text-xs text-rose-500 mt-1.5 font-medium"><%= msg2 %></p>
+        <% } %>
+      </div>
+
+      <!-- Remember & Forgot Password Link -->
+      <div class="flex justify-between items-center text-xs font-medium mt-1">
+        <label class="flex items-center gap-2.5 text-[#64748b] cursor-pointer">
+          <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-indigo-650 focus:ring-indigo-500 cursor-pointer">
+          <span>Remember me</span>
+        </label>
+        <a href="/forget" class="text-[#4b49e5] hover:text-indigo-700 font-semibold transition-all">Forgot Password?</a>
+      </div>
+
+      <!-- Sign In Submit Button -->
+      <button type="submit" class="w-full mt-3 bg-[#4b49e5] hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition-all cursor-pointer text-sm tracking-wide">
+        Sign In
+      </button>
+    </form>
+
+    <div class="mt-6 text-center text-xs text-[#7a819b] border-t border-slate-100 pt-4">
+      <span class="font-semibold text-[#1e293b]">Demo Credentials (Admin):</span><br>
+      Email: <span class="font-mono text-[#334155] select-all">admin@gmail.com</span> | Password: <span class="font-mono text-[#334155] select-all">admin</span>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

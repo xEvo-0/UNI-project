@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Upload Assignments | Student Portal</title>
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-slate-50 min-h-screen">
+
+    <div class="flex">
+
+        <!-- Sidebar Partial -->
+        <%- include("partials/navBar") %>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 lg:p-10 overflow-y-auto">
+
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Bulk Upload Assignments</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">Submit up to 5 documents simultaneously for faculty review</p>
+                </div>
+                <a href="/studentDashboard" class="text-sm font-semibold text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm max-w-3xl mx-auto space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Bulk Assignment Details</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Specify category and description details to apply to all uploaded documents</p>
+                </div>
+
+                <form id="uploadForm" action="/uploadBulkAssignments" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+                    <!-- Row 1: Title + Category -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Title -->
+                        <div>
+                            <label class="block mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Title Prefix</label>
+                            <input type="text" name="title"
+                                class="w-full p-3.5 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition"
+                                placeholder="Enter base title" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label class="block mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                            <select name="category"
+                                class="w-full p-3.5 border border-slate-200 rounded-xl text-sm bg-white focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition cursor-pointer"
+                                required>
+                                <option value="">Select Category</option>
+                                <option value="Assignment">Assignment</option>
+                                <option value="Thesis">Thesis</option>
+                                <option value="Report">Report</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Row 2: Description + File Upload -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Description -->
+                        <div class="flex flex-col">
+                            <label class="block mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
+                            <textarea name="description" rows="7"
+                                class="w-full flex-1 p-3.5 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition resize-none"
+                                placeholder="Write a short description..." required></textarea>
+                        </div>
+
+                        <!-- Multi-File Upload Dropzone -->
+                        <div>
+                            <label class="block mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Upload Documents (Max 5)</label>
+                            
+                            <div id="dropzone" 
+                                 class="border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-2xl p-6 bg-slate-50/50 hover:bg-slate-50 transition duration-200 text-center cursor-pointer flex flex-col items-center justify-center min-h-[180px] relative">
+                                
+                                <input type="file" id="fileInput" name="files"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       accept=".pdf" required multiple>
+
+                                <!-- Dropzone Content -->
+                                <div id="dropzonePrompt" class="space-y-2 pointer-events-none">
+                                    <div class="w-12 h-12 bg-white text-slate-400 rounded-xl flex items-center justify-center shadow-sm mx-auto border border-slate-100">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-semibold text-slate-700">Drag & drop your files or <span class="text-emerald-600 hover:text-emerald-700">browse</span></p>
+                                    <p class="text-xxs text-slate-400 font-medium">Upload up to 5 PDFs</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Selected Files List -->
+                    <div id="selectedFilesSection" class="hidden space-y-3 bg-slate-50/60 p-5 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Selected Files</span>
+                            <span id="fileCountBadge" class="bg-indigo-50 text-indigo-700 text-xxs font-bold px-2 py-0.5 rounded-full border border-indigo-200">0 Files</span>
+                        </div>
+                        <div id="fileList" class="space-y-2">
+                            <!-- Files list dynamically generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0110 21a3.745 3.745 0 01-3.068-1.593 3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                        </svg>
+                        Upload Bulk Assignments
+                    </button>
+
+                </form>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Reusable Status Modal Partial -->
+    <%- include("partials/statusModal") %>
+
+    <!-- CLIENT SIDE DRAGZONE AND SUBMIT SCRIPT -->
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropzone = document.getElementById('dropzone');
+        const dropzonePrompt = document.getElementById('dropzonePrompt');
+        const selectedFilesSection = document.getElementById('selectedFilesSection');
+        const fileList = document.getElementById('fileList');
+        const fileCountBadge = document.getElementById('fileCountBadge');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Drag and drop visual states
+        fileInput.addEventListener('dragenter', () => {
+            dropzone.classList.remove('border-slate-200', 'bg-slate-50/50');
+            dropzone.classList.add('border-emerald-500', 'bg-emerald-50/20');
+        });
+
+        fileInput.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-emerald-500', 'bg-emerald-50/20');
+            dropzone.classList.add('border-slate-200', 'bg-slate-50/50');
+        });
+
+        fileInput.addEventListener('drop', () => {
+            dropzone.classList.remove('border-emerald-500', 'bg-emerald-50/20');
+            dropzone.classList.add('border-slate-200', 'bg-slate-50/50');
+        });
+
+        // File selection handler
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                if (this.files.length > 5) {
+                    showStatusModal('error', 'You can upload a maximum of 5 files at once.');
+                    this.value = '';
+                    selectedFilesSection.classList.add('hidden');
+                    dropzonePrompt.classList.remove('hidden');
+                    return;
+                }
+
+                fileList.innerHTML = '';
+                
+                Array.from(this.files).forEach((file, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl shadow-sm';
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-3 truncate">
+                            <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center shadow-inner flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold text-slate-700 truncate">${file.name}</span>
+                        </div>
+                        <span class="text-xxs text-slate-400 font-medium whitespace-nowrap">${formatBytes(file.size)}</span>
+                    `;
+                    fileList.appendChild(item);
+                });
+
+                fileCountBadge.innerText = `${this.files.length} Files`;
+                dropzonePrompt.classList.add('hidden');
+                selectedFilesSection.classList.remove('hidden');
+                dropzone.classList.add('border-emerald-500');
+            } else {
+                selectedFilesSection.classList.add('hidden');
+                dropzonePrompt.classList.remove('hidden');
+                dropzone.classList.remove('border-emerald-500');
+            }
+        });
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        // Intercept Form Submit & Submit via AJAX
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validate files count
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showStatusModal('error', 'Please select at least one document to upload.');
+                return;
+            }
+
+            // Show loading modal
+            showStatusModal('loading');
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showStatusModal('success', data.message || 'All assignments have been successfully uploaded as Drafts.');
+                } else {
+                    showStatusModal('error', data.message || 'We could not upload your assignments. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                showStatusModal('error', 'Network error or server is unavailable. Please verify your connection and try again.');
+            }
+        });
+    </script>
+
+</body>
+</html>

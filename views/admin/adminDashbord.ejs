@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-100">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Assignment Approval System</title>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/output.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="h-full text-slate-900 antialiased">
+  <main class="flex items-start min-h-screen">
+    <%- include('partials/leftPartial') %>
+
+    <% let studentCount=0;
+       let professorCount=0;
+       let hodCount=0;
+    
+    data.forEach(item=> {
+      if (item._id === 'Student') studentCount = item.countUsers;
+      if (item._id === 'Professor') professorCount = item.countUsers;
+      if (item._id === 'HOD') hodCount = item.countUsers;
+      });
+      %>
+
+    <div id="right" class="flex-1 p-8 lg:p-12 bg-slate-100 min-h-screen">
+      <!-- Top header welcome -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6 mb-8">
+        <div>
+          <h1 id="dash" class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Dashboard Overview
+          </h1>
+          <p class="text-slate-500 mt-1 text-sm sm:text-base">Welcome to the administration panel. Manage departments, users, and oversee the system stats.</p>
+        </div>
+        <div class="text-xs sm:text-sm text-slate-600 font-semibold bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm flex items-center gap-2 self-start md:self-auto">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          System Status: Online
+        </div>
+      </div>
+
+      <!-- Stats Cards Grid -->
+      <div class="stats-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Departments Card -->
+        <div class="box relative overflow-hidden bg-indigo-50 border border-indigo-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:shadow-indigo-100/50 hover:-translate-y-1 hover:border-indigo-400 transition-all duration-300 group">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-indigo-200/40 group-hover:scale-125 transition-transform duration-500"></div>
+          <div class="flex items-center justify-between z-10 relative">
+            <div>
+              <p class="label text-xs font-bold text-indigo-800 uppercase tracking-wider">Total Departments</p>
+              <h3 class="value text-3xl font-extrabold text-indigo-950 mt-2 tracking-tight">
+                <%= deptCount[0].totalDepartments %>
+              </h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-indigo-200/60 flex items-center justify-center text-xl text-indigo-700 border border-indigo-300/30 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              🏢
+            </div>
+          </div>
+          <div class="mt-5 flex items-center text-xs font-bold text-indigo-650 z-10 relative">
+            <a href="/Departments" class="hover:underline flex items-center gap-1 hover:text-indigo-850">
+              View all departments &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Students Card -->
+        <div class="box relative overflow-hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:shadow-emerald-100/50 hover:-translate-y-1 hover:border-emerald-400 transition-all duration-300 group">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-emerald-200/40 group-hover:scale-125 transition-transform duration-500"></div>
+          <div class="flex items-center justify-between z-10 relative">
+            <div>
+              <p class="label text-xs font-bold text-emerald-800 uppercase tracking-wider">Total Students</p>
+              <h3 class="value text-3xl font-extrabold text-emerald-950 mt-2 tracking-tight">
+                <%= studentCount %>
+              </h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-200/60 flex items-center justify-center text-xl text-emerald-700 border border-emerald-300/30 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              🎓
+            </div>
+          </div>
+          <div class="mt-5 flex items-center text-xs font-bold text-emerald-650 z-10 relative">
+            <a href="/users?role=Student" class="hover:underline flex items-center gap-1 hover:text-emerald-850">
+              Filter by student &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Professors Card -->
+        <div class="box relative overflow-hidden bg-amber-55/60 border border-amber-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:shadow-amber-100/50 hover:-translate-y-1 hover:border-amber-400 transition-all duration-300 group">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-amber-200/40 group-hover:scale-125 transition-transform duration-500"></div>
+          <div class="flex items-center justify-between z-10 relative">
+            <div>
+              <p class="label text-xs font-bold text-amber-800 uppercase tracking-wider">Total Professors</p>
+              <h3 class="value text-3xl font-extrabold text-amber-950 mt-2 tracking-tight">
+                <%= professorCount %>
+              </h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-200/60 flex items-center justify-center text-xl text-amber-700 border border-amber-300/30 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              👨‍🏫
+            </div>
+          </div>
+          <div class="mt-5 flex items-center text-xs font-bold text-amber-700 z-10 relative">
+            <a href="/users?role=Professor" class="hover:underline flex items-center gap-1 hover:text-amber-850">
+              Filter by professor &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- HODs Card -->
+        <div class="box relative overflow-hidden bg-purple-50 border border-purple-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:shadow-purple-100/50 hover:-translate-y-1 hover:border-purple-400 transition-all duration-300 group">
+          <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-purple-200/40 group-hover:scale-125 transition-transform duration-500"></div>
+          <div class="flex items-center justify-between z-10 relative">
+            <div>
+              <p class="label text-xs font-bold text-purple-800 uppercase tracking-wider">Total HODs</p>
+              <h3 class="value text-3xl font-extrabold text-purple-950 mt-2 tracking-tight">
+                <%= hodCount %>
+              </h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-purple-200/60 flex items-center justify-center text-xl text-purple-750 border border-purple-300/30 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              💼
+            </div>
+          </div>
+          <div class="mt-5 flex items-center text-xs font-bold text-purple-700 z-10 relative">
+            <a href="/users?role=HOD" class="hover:underline flex items-center gap-1 hover:text-purple-850">
+              Filter by HOD &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+
+</html>

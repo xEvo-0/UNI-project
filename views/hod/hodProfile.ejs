@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | HOD Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/20 min-h-screen text-slate-800">
+
+    <div class="flex">
+
+        <!-- Sidebar -->
+        <%- include("partials/hodNavbar", { activePage: "profile" }) %>
+
+        <!-- Profile Content -->
+        <main class="flex-1 p-8 lg:p-10 overflow-y-auto animate-fade-in-up">
+
+            <!-- Page Header -->
+            <div class="flex justify-between items-center mb-8 bg-white/70 backdrop-blur-md p-6 rounded-2xl border border-slate-200/50 shadow-sm transition-all duration-300 hover:shadow-md">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">My Profile</h1>
+                    <p class="text-xs text-slate-650 font-semibold mt-1">View and manage your department faculty profile information</p>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/55 shadow-sm p-8 max-w-xl mx-auto mt-6">
+
+                <!-- Profile Icon -->
+                <div class="flex flex-col items-center">
+                    <div class="w-28 h-28 rounded-full bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center text-4xl font-extrabold text-white shadow-lg shadow-red-200/50 scale-[1.02]">
+                        <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-6 tracking-tight"><%= user.name %></h2>
+                    <span class="px-3 py-1 bg-red-50 text-red-700 text-xxs font-extrabold uppercase tracking-widest rounded-full border border-red-100 mt-1 shadow-sm">
+                        Department HOD
+                    </span>
+                </div>
+
+                <!-- User Details -->
+                <div class="mt-10 space-y-6">
+
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <span class="font-bold text-slate-800 text-sm">Full Name</span>
+                        <span class="text-slate-855 font-bold text-sm"><%= user.name %></span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <span class="font-bold text-slate-800 text-sm">Email Address</span>
+                        <span class="text-slate-855 font-bold text-sm"><%= user.email %></span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <span class="font-bold text-slate-800 text-sm">Phone Number</span>
+                        <span class="text-slate-855 font-bold text-sm"><%= user.phone %></span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <span class="font-bold text-slate-800 text-sm">Department</span>
+                        <span class="text-slate-855 font-bold text-sm"><%= user.departement %></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

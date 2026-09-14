@@ -1,0 +1,94 @@
+<!-- Upload Status Modal Overlay -->
+<div id="statusModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full border border-slate-100 shadow-2xl transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center" id="statusModalContent">
+        
+        <!-- Loading Icon (Spinner) -->
+        <div id="statusModalLoading" class="hidden flex flex-col items-center">
+            <div class="relative w-16 h-16">
+                <!-- Glowing Outer Rings -->
+                <div class="absolute inset-0 rounded-full border-4 border-emerald-500/20"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mt-6">Uploading Assignment</h3>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Uploading files securely to Cloudinary storage. Please do not close or refresh this page...</p>
+        </div>
+
+        <!-- Success Icon (Checkmark) -->
+        <div id="statusModalSuccess" class="hidden flex flex-col items-center">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center border-4 border-emerald-100 shadow-md">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mt-6">Upload Successful!</h3>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed" id="statusModalSuccessMessage">Your assignment has been saved as a draft.</p>
+            <button onclick="window.location.href='/studentDashboard';" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-md hover:shadow-lg">
+                Go to Dashboard
+            </button>
+        </div>
+
+        <!-- Error Icon (X-Mark) -->
+        <div id="statusModalError" class="hidden flex flex-col items-center">
+            <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center border-4 border-rose-100 shadow-md">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mt-6">Upload Failed</h3>
+            <p class="text-xs text-rose-600 bg-rose-50 border border-rose-100/60 rounded-xl p-3 mt-3 w-full leading-relaxed" id="statusModalErrorMessage">Something went wrong.</p>
+            <button onclick="closeStatusModal();" class="mt-6 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-xl text-sm transition-all border border-slate-200">
+                Close & Try Again
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const statusModal = document.getElementById('statusModal');
+    const statusModalContent = document.getElementById('statusModalContent');
+    const statusModalLoading = document.getElementById('statusModalLoading');
+    const statusModalSuccess = document.getElementById('statusModalSuccess');
+    const statusModalError = document.getElementById('statusModalError');
+
+    function showStatusModal(mode, message = "") {
+        // Hide all blocks
+        statusModalLoading.classList.add('hidden');
+        statusModalSuccess.classList.add('hidden');
+        statusModalError.classList.add('hidden');
+
+        // Show specified block
+        if (mode === 'loading') {
+            statusModalLoading.classList.remove('hidden');
+        } else if (mode === 'success') {
+            statusModalSuccess.classList.remove('hidden');
+            if (message) {
+                document.getElementById('statusModalSuccessMessage').innerText = message;
+            }
+        } else if (mode === 'error') {
+            statusModalError.classList.remove('hidden');
+            if (message) {
+                document.getElementById('statusModalErrorMessage').innerText = message;
+            }
+        }
+
+        // Display modal overlay
+        statusModal.classList.remove('hidden');
+        setTimeout(() => {
+            statusModal.classList.remove('opacity-0');
+            statusModal.classList.add('opacity-100');
+            statusModalContent.classList.remove('scale-95', 'opacity-0');
+            statusModalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeStatusModal() {
+        statusModal.classList.remove('opacity-100');
+        statusModal.classList.add('opacity-0');
+        statusModalContent.classList.remove('scale-100', 'opacity-100');
+        statusModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            statusModal.classList.add('hidden');
+        }, 300);
+    }
+</script>

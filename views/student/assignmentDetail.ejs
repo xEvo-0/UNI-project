@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Assignment for Review</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <div class="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+
+        <!-- PAGE TITLE -->
+        <h1 class="text-2xl font-semibold mb-6">Submit Assignment for Review</h1>
+
+        <!-- ASSIGNMENT DETAILS -->
+        <div class="mb-6">
+            <p class="text-gray-500 text-sm">Assignment Title</p>
+            <p class="text-xl font-semibold"><%= assignment.title %></p>
+        </div>
+
+        <!-- FORM START -->
+        <form action="/submitReview/<%= assignment._id %>" method="POST">
+
+            <!-- SELECT PROFESSOR -->
+            <div class="mb-6">
+                <label class="block font-medium mb-2">Select Professor</label>
+
+                <select id="professorSelect" name="reviewer" required
+                    class="w-full border px-3 py-2 rounded-lg bg-gray-50">
+                    <option value="">-- Choose Professor --</option>
+
+                    <% professors.forEach(prof => { %>
+                        <option value="<%= prof.name %>">
+                            <%= prof.name %> - <%= prof.departmentName %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700">
+                    Confirm Submission
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

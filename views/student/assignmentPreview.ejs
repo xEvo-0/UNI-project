@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Preview | Student Portal</title>
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-slate-50 min-h-screen flex">
+
+    <!-- Sidebar Partial -->
+    <%- include("partials/navBar", { activePage: "assignments" }) %>
+
+    <!-- ================= STATUS CALCULATION ================= -->
+    <%
+        const s = assignment.status ? assignment.status.toLowerCase() : "draft";
+        const ap = assignment.approvedBy ? assignment.approvedBy.toLowerCase() : "";
+        const rp = assignment.rejectedBy ? assignment.rejectedBy.toLowerCase() : "";
+        
+        let displayStatus = "Draft";
+        let badgeClass = "bg-slate-100 text-slate-700 border-slate-200";
+
+        let currentStep = 1; 
+        let step1State = "completed"; 
+        let step2State = "upcoming"; 
+        let step3State = "upcoming"; 
+        let step4State = "upcoming"; 
+        let step4Label = "Final Approval";
+
+        if (s === "draft") {
+            displayStatus = "Draft";
+            badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
+            currentStep = 1;
+            step2State = "upcoming";
+        } else if (s === "submitted") {
+            displayStatus = "Submitted for Review";
+            badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+            currentStep = 2;
+            step2State = "current";
+        } else if (s === "forward" || s === "forwarded") {
+            displayStatus = "Forwarded to HOD";
+            badgeClass = "bg-sky-50 text-sky-700 border-sky-200";
+            currentStep = 3;
+            step2State = "completed";
+            step3State = "current";
+        } else if (s === "approved") {
+            step2State = "completed";
+            step3State = "completed";
+            step4State = "completed";
+            step4Label = "Approved";
+            if (ap === "professor") {
+                displayStatus = "Approved by Professor";
+                badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+            } else if (ap === "hod") {
+                displayStatus = "Approved by HOD";
+                badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+            } else {
+                displayStatus = "Approved";
+                badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+            }
+            currentStep = 4;
+        } else if (s === "rejected") {
+            step2State = "completed";
+            step3State = "completed";
+            step4State = "rejected";
+            if (rp === "professor") {
+                displayStatus = "Rejected by Professor";
+                badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                step4Label = "Rejected by Professor";
+            } else if (rp === "hod") {
+                displayStatus = "Rejected by HOD";
+                badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                step4Label = "Rejected by HOD";
+            } else {
+                displayStatus = "Rejected";
+                badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                step4Label = "Rejected";
+            }
+            currentStep = 4;
+        }
+    %>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+        <!-- Breadcrumb Navigation -->
+        <nav class="flex mb-6 text-sm text-slate-500 font-medium items-center space-x-2">
+            <a href="/studentDashboard" class="hover:text-emerald-600 transition-colors">Dashboard</a>
+            <span>/</span>
+            <a href="/allAssignments" class="hover:text-emerald-600 transition-colors">Assignments</a>
+            <span>/</span>
+            <span class="text-slate-800 truncate">Preview</span>
+        </nav>
+
+        <!-- Header Panel -->
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 leading-tight">Assignment Preview</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">View documents, progress details, and approval workflow</p>
+                </div>
+            </div>
+            
+            <a href="/allAssignments" 
+               class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-all flex items-center gap-2 border border-slate-200">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                </svg>
+                Back to List
+            </a>
+        </div>
+
+        <!-- 2-Column Responsive Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT PANEL: Details & Files (70% on Desktop) -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Details Card -->
+                <div class="bg-white p-6.5 rounded-2xl border border-slate-100 shadow-sm space-y-5">
+                    <div class="flex justify-between items-start gap-4">
+                        <h2 class="text-xl font-bold text-slate-800"><%= assignment.title %></h2>
+                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider capitalize">
+                            <%= assignment.category %>
+                        </span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Description</h3>
+                        <p class="text-slate-600 text-sm whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed">
+                            <%= assignment.description %>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Attached Files & PDF Viewer Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2.5">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            📎 Attached Files
+                        </h2>
+                    </div>
+
+                    <% if (!assignment.preview_url || assignment.preview_url.length === 0) { %>
+                        <div class="flex flex-col items-center justify-center py-12 text-slate-400 bg-slate-50 rounded-xl border border-dashed">
+                            <svg class="w-12 h-12 stroke-current mb-3 opacity-60" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                            <p class="text-sm font-medium italic">No files attached to this assignment.</p>
+                        </div>
+                    <% } else { %>
+                        <!-- File Tabs (Visible if multiple files exist) -->
+                        <% if (assignment.preview_url.length > 1) { %>
+                            <div class="flex border-b border-slate-100 pb-px overflow-x-auto space-x-2">
+                                <% assignment.preview_url.forEach((url, index) => { %>
+                                    <button class="pdf-tab-btn px-4 py-2 border-b-2 font-semibold text-sm whitespace-nowrap focus:outline-none transition-all <%= index === 0 ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600' %>"
+                                            onclick="switchPdfTab(this, '<%= url %>', '<%= assignment.download_url && assignment.download_url[index] ? assignment.download_url[index] : '' %>')">
+                                        📄 File <%= index + 1 %>
+                                    </button>
+                                <% }) %>
+                            </div>
+                        <% } %>
+
+                        <!-- Action Toolbar (Download Active File) -->
+                        <div class="flex justify-between items-center bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-500 font-medium">Viewing Document</span>
+                            <% if (assignment.download_url && assignment.download_url[0]) { %>
+                                <a id="activeDownloadLink" href="<%= assignment.download_url[0] %>" download
+                                   class="bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 shadow flex items-center gap-1.5 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>
+                                    Download File
+                                </a>
+                            <% } %>
+                        </div>
+
+                        <!-- Embedded PDF Iframe -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-inner bg-slate-100 relative">
+                            <iframe id="assignmentPdfViewer" src="<%= assignment.preview_url[0] %>" 
+                                    class="w-full h-[650px]" frameborder="0"></iframe>
+                        </div>
+                    <% } %>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: Timeline Stepper & Meta details (30% on Desktop) -->
+            <div class="space-y-8">
+                
+                <!-- Status & Stepper Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+                    <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3">Approval Progress</h2>
+
+                    <!-- Badges -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-semibold text-slate-500">Current Status</span>
+                        <span class="px-3.5 py-1 border rounded-full text-xs font-bold shadow-sm uppercase tracking-wider <%= badgeClass %>">
+                            <%= displayStatus %>
+                        </span>
+                    </div>
+
+                    <!-- STEPPER VERTICAL TIMELINE -->
+                    <div class="mt-6 flex flex-col">
+                        
+                        <!-- Step 1: Draft -->
+                        <div class="relative pl-9 pb-8">
+                            <!-- Vertical Line -->
+                            <div class="absolute left-3.5 top-7 w-0.5 h-[calc(100%-28px)] bg-emerald-500"></div>
+                            
+                            <!-- Circle Icon -->
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full border-2 border-emerald-500 bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <!-- Step Content -->
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Draft Created</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Assignment upload complete and editable.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Under Review -->
+                        <div class="relative pl-9 pb-8">
+                            <!-- Vertical Line -->
+                            <% let line2Class = (currentStep > 2) ? 'bg-emerald-500' : 'bg-slate-200'; %>
+                            <div class="absolute left-3.5 top-7 w-0.5 h-[calc(100%-28px)] <%= line2Class %>"></div>
+                            
+                            <!-- Circle Icon -->
+                            <% 
+                                let step2Icon = "";
+                                if (step2State === "completed") {
+                                    step2Icon = `border-emerald-500 bg-emerald-50 text-emerald-600`;
+                                } else if (step2State === "current") {
+                                    step2Icon = `border-blue-500 bg-blue-50 text-blue-600 animate-pulse`;
+                                } else {
+                                    step2Icon = `border-slate-200 bg-slate-50 text-slate-400`;
+                                }
+                            %>
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center shadow-sm <%= step2Icon %>">
+                                <% if (step2State === "completed") { %>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                <% } else { %>
+                                    <span class="text-xs font-bold">2</span>
+                                <% } %>
+                            </div>
+                            <!-- Step Content -->
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Professor Evaluation</h3>
+                                <% if (assignment.currentReviewer) { %>
+                                    <p class="text-xs text-slate-500 mt-0.5 font-medium">Assigned to: <span class="text-purple-600"><%= assignment.currentReviewer %></span></p>
+                                <% } else { %>
+                                    <p class="text-xs text-slate-400 mt-0.5">Under evaluation by designated professor.</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: HOD Approval Check -->
+                        <div class="relative pl-9 pb-8">
+                            <!-- Vertical Line -->
+                            <% let line3Class = (currentStep > 3) ? 'bg-emerald-500' : 'bg-slate-200'; %>
+                            <div class="absolute left-3.5 top-7 w-0.5 h-[calc(100%-28px)] <%= line3Class %>"></div>
+                            
+                            <!-- Circle Icon -->
+                            <% 
+                                let step3Icon = "";
+                                if (step3State === "completed") {
+                                    step3Icon = `border-emerald-500 bg-emerald-50 text-emerald-600`;
+                                } else if (step3State === "current") {
+                                    step3Icon = `border-sky-500 bg-sky-50 text-sky-600 animate-pulse`;
+                                } else {
+                                    step3Icon = `border-slate-200 bg-slate-50 text-slate-400`;
+                                }
+                            %>
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center shadow-sm <%= step3Icon %>">
+                                <% if (step3State === "completed") { %>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                <% } else { %>
+                                    <span class="text-xs font-bold">3</span>
+                                <% } %>
+                            </div>
+                            <!-- Step Content -->
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">HOD Review</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Verification and validation by Head of Department.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Final Outcome -->
+                        <div class="relative pl-9">
+                            <!-- Circle Icon -->
+                            <% 
+                                let step4Icon = "";
+                                if (step4State === "completed") {
+                                    step4Icon = `border-emerald-500 bg-emerald-50 text-emerald-600`;
+                                } else if (step4State === "rejected") {
+                                    step4Icon = `border-rose-500 bg-rose-50 text-rose-600`;
+                                } else {
+                                    step4Icon = `border-slate-200 bg-slate-50 text-slate-400`;
+                                }
+                            %>
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center shadow-sm <%= step4Icon %>">
+                                <% if (step4State === "completed") { %>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                <% } else if (step4State === "rejected") { %>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                <% } else { %>
+                                    <span class="text-xs font-bold">4</span>
+                                <% } %>
+                            </div>
+                            <!-- Step Content -->
+                            <div>
+                                <h3 class="text-sm font-bold <%= step4State === 'completed' ? 'text-emerald-700' : (step4State === 'rejected' ? 'text-rose-700' : 'text-slate-800') %>">
+                                    <%= step4Label %>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Final sign-off or action required.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Assignment Meta details Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3">Details</h2>
+                    
+                    <div class="divide-y divide-slate-100 text-sm">
+                        <div class="py-2.5 flex justify-between">
+                            <span class="text-slate-500">Submitted By</span>
+                            <span class="font-semibold text-slate-700"><%= assignment.submittedBy || "Draft Only" %></span>
+                        </div>
+                        <div class="py-2.5 flex justify-between">
+                            <span class="text-slate-500">Category</span>
+                            <span class="font-semibold text-slate-700 capitalize"><%= assignment.category %></span>
+                        </div>
+                        <div class="py-2.5 flex justify-between">
+                            <span class="text-slate-500">Date Uploaded</span>
+                            <span class="font-semibold text-slate-700">
+                                <%= assignment.createdAt ? new Date(assignment.createdAt).toLocaleDateString() : "-" %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Card (Trigger Modal) -->
+                <% if (s === "draft" || s === "rejected") { %>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                        <h2 class="text-md font-bold text-slate-800">Action Required</h2>
+                        <p class="text-xs text-slate-400">Choose a reviewer and submit this assignment for evaluation.</p>
+                        
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg open-submit-modal-btn flex items-center justify-center gap-2"
+                                data-assignment-id="<%= assignment._id %>"
+                                data-assignment-title="<%= assignment.title %>"
+                                onclick="openSubmitModal(this.getAttribute('data-assignment-id'), this.getAttribute('data-assignment-title'));">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                            </svg>
+                            <%= s === "rejected" ? "Resubmit for Review" : "Submit for Review" %>
+                        </button>
+                    </div>
+                <% } %>
+
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Tab switching logic helper -->
+    <script>
+        function switchPdfTab(button, url, downloadUrl) {
+            // Update active tab styles
+            const buttons = button.parentNode.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'text-emerald-600');
+                btn.classList.add('border-transparent', 'text-slate-400');
+            });
+            button.classList.remove('border-transparent', 'text-slate-400');
+            button.classList.add('border-emerald-500', 'text-emerald-600');
+
+            // Update iframe source
+            const iframe = document.getElementById('assignmentPdfViewer');
+            if (iframe) {
+                iframe.src = url;
+            }
+
+            // Update download button link
+            const downloadBtn = document.getElementById('activeDownloadLink');
+            if (downloadBtn) {
+                if (downloadUrl) {
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.classList.remove('hidden');
+                } else {
+                    downloadBtn.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+
+    <!-- Include Modal Dialog Partial -->
+    <%- include("partials/submitModal") %>
+
+</body>
+</html>
